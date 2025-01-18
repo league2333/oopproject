@@ -6,21 +6,30 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import SceneManagement.SceneManager;
 import SceneManagement.GameScene;
+import InputOutputManagement.InputManager;
+import EntityManagement.Vector;
+import EntityManagement.Player;
 
 public class GameEngine implements ApplicationListener {
-
     private ShapeRenderer shapeRenderer;
     private SceneManager sceneManager;
+    private InputManager inputManager;
 
     @Override
     public void create() {
         shapeRenderer = new ShapeRenderer();  // Initialize ShapeRenderer here, after OpenGL context is set.
         sceneManager = SceneManager.getInstance();
+        inputManager = new InputManager();
+
+        // Initialize the player and add the GameScene to the scene manager
+        Vector startPosition = new Vector(50, 50);  // Initialize the Vector position
+        Player player = new Player(startPosition);  // Create the player object
+
+        sceneManager.addScene("Game", new GameScene(player));  // Pass player to the scene
+        sceneManager.switchScene("Game");  // Set GameScene as the active scene
 
         try {
-            sceneManager.addScene("Game", new GameScene()); // Add GameScene
-            sceneManager.switchScene("Game"); // Switch to GameScene
-            Gdx.gl.glClearColor(0, 0, 0, 1);  // Set the clear color to black
+            Gdx.gl.glClearColor(0, 0, 0, 1); // Set clear color to black
         } catch (Exception e) {
             System.out.println("Error initializing GameScene: " + e.getMessage());
             e.printStackTrace();
@@ -29,13 +38,18 @@ public class GameEngine implements ApplicationListener {
 
     @Override
     public void render() {
-        if (sceneManager.getActiveScene() != null) {
-            // Clear the screen using Gdx.gl
-            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); // Clear the screen
-            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-            sceneManager.getActiveScene().render(shapeRenderer); // Render the active scene
-            shapeRenderer.end();
+        // Handle input - get player from active scene
+        GameScene activeScene = (GameScene) sceneManager.getActiveScene();
+        if (activeScene != null) {
+            inputManager.processInput(activeScene.getPlayer());
         }
+
+        // Clear screen
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        // Update and render the scene
+        sceneManager.getActiveScene().update();
+        sceneManager.getActiveScene().render(shapeRenderer);
     }
 
     @Override
@@ -55,7 +69,7 @@ public class GameEngine implements ApplicationListener {
 
     @Override
     public void dispose() {
-        shapeRenderer.dispose();  // Dispose ShapeRenderer here
-        sceneManager.dispose(); // Dispose of the scene manager when done
+        shapeRenderer.dispose();
+        sceneManager.dispose();
     }
 }

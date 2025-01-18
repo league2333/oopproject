@@ -1,28 +1,37 @@
 package SceneManagement;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 
 public class MainMenuScene extends Scene {
 
     @Override
-    public void load() {
-        // Load menu-specific resources
-    }
-
-    @Override
     public void render(ShapeRenderer shapeRenderer) {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        // Render the main menu here
+        
+        // Draw "Start Game" button or any other menu elements
+        shapeRenderer.rect(200, 150, 400, 100); // Example button (could be a rectangle)
+
         shapeRenderer.end();
     }
 
     @Override
-    public void update() {
-        // Update menu logic here
+    public void load() {
+        // Load resources for the Main Menu
     }
 
     @Override
     public void unload() {
-        // Unload resources if needed
+        // Clean up resources for the Main Menu
+    }
+
+    @Override
+    public void update() {
+        // Check for user input (for example, clicking a "Start Game" button)
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+            // Switch to the Game Scene when ENTER is pressed
+            SceneManager.getInstance().switchScene("Game");
+        }
     }
 }

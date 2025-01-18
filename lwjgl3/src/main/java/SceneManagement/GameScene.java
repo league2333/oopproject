@@ -1,41 +1,50 @@
 package SceneManagement;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import EntityManagement.Player;
 import EntityManagement.Vector;
 
 public class GameScene extends Scene {
+    private Player player;
+    private int width = 50;
+    private int height = 50;
 
-    private Vector position;
-    private int width = 100;
-    private int height = 100;
+    // Modify the constructor to accept a Player object
+    public GameScene(Player player) {
+        this.player = player;  // Set the player
+    }
 
-    public GameScene() {
-        position = new Vector(50, 50); // Example starting position
+    public Player getPlayer() {
+        return player;
     }
 
     @Override
     public void render(ShapeRenderer shapeRenderer) {
-        // Always ensure begin() is paired with end()
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-
-        // Ensure no other begin() calls are made here before end() is called
-        shapeRenderer.rect(position.getX(), position.getY(), width, height);  // Render rectangle based on Vector
-
-        shapeRenderer.end();  // Always call end() to complete the batch
+        
+        // Render player using the position from the Player object
+        shapeRenderer.rect(
+            player.getPosition().getX(),
+            player.getPosition().getY(),
+            width,
+            height
+        );
+        
+        shapeRenderer.end();
     }
 
     @Override
     public void load() {
-        // Load resources or prepare scene
+        // Load any resources if needed
     }
 
     @Override
     public void unload() {
-        // Clean up resources if needed
+        // Clean up any resources
     }
 
     @Override
     public void update() {
-        // Update logic for the Game Scene
+        player.update(); // Update player position
     }
 }
