@@ -9,15 +9,16 @@ import com.badlogic.gdx.math.Vector2;
 import SceneManagement.SceneManager;
 import SceneManagement.GameScene;
 import SceneManagement.MainMenuScene;
+import SceneManagement.PauseScene;
 import SceneManagement.Scene;
 import InputOutputManagement.InputManager;
-//import EntityManagement.Vector2;
 import EntityManagement.Player;
 
 public class GameEngine implements ApplicationListener {
     private SpriteBatch spriteBatch;
     private SceneManager sceneManager;
     private InputManager inputManager;
+    private boolean isPaused;
 
     @Override
     public void create() {
@@ -27,33 +28,53 @@ public class GameEngine implements ApplicationListener {
 
         // Initialize with window boundaries
         float minX = +50;
-        float maxX = Gdx.graphics.getWidth() -40;
+        float maxX = Gdx.graphics.getWidth() - 40;
         float minY = +35;
-        float maxY = Gdx.graphics.getHeight()- 40;
-        
-        
+        float maxY = Gdx.graphics.getHeight() - 40;
+
         // Initialize the player
-       Player player = new Player(
-                new Vector2(400, 300),
-                minX, maxX, minY, maxY
-            );;
+        Player player = new Player(
+            new Vector2(400, 300),
+            minX, maxX, minY, maxY
+        );
 
         // Add scenes to the SceneManager
         sceneManager.addScene("MainMenu", new MainMenuScene());
         sceneManager.addScene("Game", new GameScene(player));
+        sceneManager.addScene("Pause", new PauseScene());
 
         // Start with the MainMenu
         sceneManager.switchScene("MainMenu");
 
         Gdx.gl.glClearColor(0, 0, 0, 1);
+        isPaused = false;
     }
 
     @Override
     public void render() {
         Scene activeScene = sceneManager.getActiveScene();
+
+        // Handle input and update only if the game is not paused
         if (activeScene instanceof GameScene) {
             GameScene gameScene = (GameScene) activeScene;
-            inputManager.processInput(gameScene.getPlayer());
+            
+            if (!isPaused) {
+                inputManager.processInput(gameScene.getPlayer());
+
+                // Check for pause
+                if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.ESCAPE)) {
+                    isPaused = true;
+                    sceneManager.switchScene("Pause");
+                    return;
+                }
+            }
+        } else if (activeScene instanceof PauseScene) {
+            // Check for unpause
+            if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.ESCAPE)) {
+                isPaused = false;
+                sceneManager.switchScene("Game");
+                return;
+            }
         }
 
         // Clear screen
@@ -61,7 +82,7 @@ public class GameEngine implements ApplicationListener {
 
         // Update and render the scene
         activeScene.update();
-        
+
         // Render using SpriteBatch
         spriteBatch.begin();
         activeScene.render(spriteBatch);
