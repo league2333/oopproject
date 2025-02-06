@@ -1,28 +1,21 @@
 package InputOutputManagement;
 
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import EntityManagement.Player;
-import EntityManagement.Vector;
 
 public class InputManager {
-
     public void processInput(Player player) {
-        Vector velocity = new Vector(0, 0); // Default velocity
-
-        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-            velocity.setY(1); // Move up
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            player.moveLeft();
+        } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            player.moveRight();
+        } else if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+            player.moveUp();
+        } else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+            player.moveDown();
+        } else {
+            player.stopMoving();
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-            velocity.setY(-1); // Move down
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-            velocity.setX(-1); // Move left
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-            velocity.setX(1); // Move right
-        }
-
-        player.setVelocity(velocity); // Update player velocity based on input
     }
 }

@@ -4,47 +4,53 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
+
 import SceneManagement.SceneManager;
 import SceneManagement.GameScene;
 import SceneManagement.MainMenuScene;
 import SceneManagement.Scene;
 import InputOutputManagement.InputManager;
-import EntityManagement.Vector;
+//import EntityManagement.Vector2;
 import EntityManagement.Player;
 
 public class GameEngine implements ApplicationListener {
-    private SpriteBatch spriteBatch; // Use SpriteBatch for rendering
+    private SpriteBatch spriteBatch;
     private SceneManager sceneManager;
     private InputManager inputManager;
 
     @Override
     public void create() {
-        spriteBatch = new SpriteBatch();  // Initialize SpriteBatch here, after OpenGL context is set.
+        spriteBatch = new SpriteBatch();
         sceneManager = SceneManager.getInstance();
         inputManager = new InputManager();
 
-        // Initialize the player and add the GameScene to the scene manager
-        Vector startPosition = new Vector(50, 50);
-        Player player = new Player(startPosition);
+        // Initialize with window boundaries
+        float minX = +50;
+        float maxX = Gdx.graphics.getWidth() -40;
+        float minY = +35;
+        float maxY = Gdx.graphics.getHeight()- 40;
         
-        // sceneManager.addScene("Game", new GameScene(player));  // Pass player to the scene
-        // sceneManager.switchScene("Game");  // Set GameScene as the active scene
         
-        // Add MainMenuScene and switch to it
+        // Initialize the player
+       Player player = new Player(
+                new Vector2(400, 300),
+                minX, maxX, minY, maxY
+            );;
+
+        // Add scenes to the SceneManager
         sceneManager.addScene("MainMenu", new MainMenuScene());
+        sceneManager.addScene("Game", new GameScene(player));
+
+        // Start with the MainMenu
         sceneManager.switchScene("MainMenu");
 
-        try {
-            Gdx.gl.glClearColor(0, 0, 0, 1); // Set clear color to black
-        } catch (Exception e) {
-            System.out.println("Error initializing GameScene: " + e.getMessage());
-            e.printStackTrace();
-        }
+        Gdx.gl.glClearColor(0, 0, 0, 1);
     }
 
     @Override
     public void render() {
-        Scene activeScene = sceneManager.getActiveScene(); 
+        Scene activeScene = sceneManager.getActiveScene();
         if (activeScene instanceof GameScene) {
             GameScene gameScene = (GameScene) activeScene;
             inputManager.processInput(gameScene.getPlayer());
@@ -56,7 +62,7 @@ public class GameEngine implements ApplicationListener {
         // Update and render the scene
         activeScene.update();
         
-        // Render using SpriteBatch (rendering logic depends on the scene type)
+        // Render using SpriteBatch
         spriteBatch.begin();
         activeScene.render(spriteBatch);
         spriteBatch.end();
@@ -79,7 +85,7 @@ public class GameEngine implements ApplicationListener {
 
     @Override
     public void dispose() {
-        spriteBatch.dispose(); // Dispose of the SpriteBatch
+        spriteBatch.dispose();
         sceneManager.dispose();
     }
 }

@@ -53,20 +53,24 @@ public class MainMenuScene extends Scene {
         font.setColor(Color.WHITE);
         font.draw(batch, logoText, logoX, logoY);
 
-        // Draw the "Start Game" button as a rounded rectangle
+        // End the SpriteBatch before using ShapeRenderer
         batch.end();
+
+        // Draw the "Start Game" button as a rounded rectangle
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(new Color(0.2f, 0.6f, 1, 1)); 
         drawRoundedRect(shapeRenderer, buttonX, buttonY, buttonWidth, buttonHeight, 20);
         shapeRenderer.end();
-        batch.begin(); // Restart SpriteBatch for text rendering
+
+        // Restart the SpriteBatch for text rendering
+        batch.begin();
 
         // Draw the "Start Game" text inside the button
         font.getData().setScale(0.4f); 
         font.setColor(Color.WHITE);
         String buttonText = "Start Game";
         float textWidth = font.getSpaceXadvance() * buttonText.length() * 0.4f;
-        float textX = buttonX + (buttonWidth - (textWidth+120) ) / 2;
+        float textX = buttonX + (buttonWidth - (textWidth + 120)) / 2;
         float textY = buttonY + (buttonHeight / 2) + 10; 
 
         // Draw shadow for the button text
